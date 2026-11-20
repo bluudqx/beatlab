@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация — BEATLAB</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">BEATLAB®</div>
+        <nav class="nav-links">
+            <a href="/">Главная</a>
+            <a href="/library.html">Библиотека</a>
+            <a href="/studio.html">Студия</a>
+            <a href="/contacts.html">Контакты</a>
+        </nav>
+        <div class="nav-auth">
+            <a href="/login.html" class="link-login">Войти</a>
+        </div>
+    </header>
+
+    <section class="auth-form">
+        <h2>SIGN UP</h2>
+        <p class="subtitle">Создайте аккаунт, чтобы загружать треки</p>
+
+        <form id="registerForm">
+            <label>Имя пользователя</label>
+            <input type="text" id="username" required placeholder="Ваш логин">
+
+            <label>Email</label>
+            <input type="email" id="email" required placeholder="you@example.com">
+
+            <label>Пароль</label>
+            <input type="password" id="password" required placeholder="Минимум 6 символов">
+
+            <button type="submit" class="btn-primary">Создать аккаунт</button>
+        </form>
+
+        <p class="switch-link">Уже есть аккаунт? <a href="/login.html">Войти</a></p>
+    </section>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/footer.js"></script>
+</body>
+</html>

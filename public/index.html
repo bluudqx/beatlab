@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEATLAB — Sound & Culture</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <style>
+        /* Стили для списка треков на главной */
+        .home-track-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .home-track-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: #111;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            transition: border-color 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .home-track-item:hover {
+            border-color: var(--text-gray);
+        }
+        .home-track-cover {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+        .home-track-info {
+            flex: 1;
+        }
+        .home-track-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-white);
+            margin-bottom: 5px;
+        }
+        .home-track-meta {
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+        @media (max-width: 768px) {
+            .home-track-item { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">BEATLAB®</div>
+        <nav class="nav-links">
+            <a href="/library.html">Библиотека</a>
+            <a href="/studio.html">Студия</a>
+            <a href="/about.html">О проекте</a>
+            <a href="/contacts.html">Контакты</a>
+        </nav>
+        <div class="nav-auth">
+            <a href="/login.html" class="link-login">Войти</a>
+            <a href="/register.html" class="btn-dark">Регистрация</a>
+        </div>
+    </header>
+
+    <section class="hero" style="background-image: url('/images/hero-bg.jpg'); background-size: cover; background-position: center;">
+        <div class="hero-overlay"></div>
+        <div class="hero-main" style="position: relative; z-index: 2;">
+            <h1 class="hero-title">MOOD<br>BOARD</h1>
+            <p class="hero-subtitle">CREATIVE SOUND & MARKETING<br>ELEGANT WORK</p>
+        </div>
+        <div class="hero-side" style="position: relative; z-index: 2;">
+            <div class="hero-image-box">
+                <div style="width: 100%; height: 400px; background-image: url('/images/hero-side.jpg'); background-size: cover; background-position: center; border-radius: 20px; margin-bottom: 15px; border: 1px solid var(--border-color);"></div>
+                <p class="image-caption">Support Business Growth</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="marquee">
+        <div class="marquee-content">
+            <span>TRAP</span> <span>•</span> <span>HIP-HOP</span> <span>•</span> <span>LO-FI</span> <span>•</span> <span>HOUSE</span> <span>•</span> <span>DRUM & BASS</span> <span>•</span>
+        </div>
+    </div>
+
+    <!-- Секция с треками (список) -->
+    <section class="projects" style="padding: 80px 50px;">
+        <div class="section-header" style="margin-bottom: 30px;">
+            <h2 class="section-title">OUR LATEST<br>TRACKS</h2>
+            <a href="/library.html" class="btn-outline">СМОТРЕТЬ ВСЕ</a>
+        </div>
+        
+        <!-- Контейнер для списка треков -->
+        <div class="home-track-list" id="homeTracks">
+            <!-- По умолчанию заглушки (если треков нет) -->
+            <a href="/library.html" class="home-track-item">
+                <div class="home-track-cover" style="background-image: url('/images/cover1.jpg');"></div>
+                <div class="home-track-info">
+                    <div class="home-track-title">Midnight Drive</div>
+                    <div class="home-track-meta">by Alex • 140 BPM</div>
+                </div>
+            </a>
+            <a href="/library.html" class="home-track-item">
+                <div class="home-track-cover" style="background-image: url('/images/cover2.jpg');"></div>
+                <div class="home-track-info">
+                    <div class="home-track-title">Neon City</div>
+                    <div class="home-track-meta">by Maria • 120 BPM</div>
+                </div>
+            </a>
+            <a href="/library.html" class="home-track-item">
+                <div class="home-track-cover" style="background-image: url('/images/cover3.jpg');"></div>
+                <div class="home-track-info">
+                    <div class="home-track-title">Summer Vibes</div>
+                    <div class="home-track-meta">by Ivan • 128 BPM</div>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Блок "Преимущества" -->
+    <section class="features">
+        <h2 class="section-title">ПОЧЕМУ BEATLAB?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎵</div>
+                <h3>Бесплатно</h3>
+                <p>Все функции доступны без подписки и скрытых платежей.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎛️</div>
+                <h3>Студия в браузере</h3>
+                <p>Создавай биты прямо на сайте, без установки программ.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💾</div>
+                <h3>Сохранение проектов</h3>
+                <p>Все твои биты сохраняются в личном кабинете.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Сообщество</h3>
+                <p>Делись треками и находи вдохновение у других музыкантов.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Блок "Этапы работы" -->
+    <section class="steps">
+        <h2 class="section-title">КАК ЭТО РАБОТАЕТ</h2>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">01</div>
+                <h3>Зарегистрируйся</h3>
+                <p>Создай аккаунт, чтобы получить доступ к студии и личному кабинету.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">02</div>
+                <h3>Создай бит</h3>
+                <p>Открой студию, расставь блоки на таймлайне и настрой звучание.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">03</div>
+                <h3>Сохрани и поделись</h3>
+                <p>Сохрани проект в личном кабинете или загрузи трек в библиотеку.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="light-block">
+        <h2 class="light-title">EVERYTHING<br>YOUR SOUND<br>NEEDS TO GROW</h2>
+        <p class="light-text">BEATLAB предлагает стратегический подход к созданию музыки. Мы объединяем талант, технологии и культуру, чтобы помочь тебе звучать уникально.</p>
+    </section>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/footer.js"></script>
+    
+    <script>
+        async function loadHomeTracks() {
+            const container = document.getElementById('homeTracks');
+            try {
+                const response = await fetch('/api/tracks');
+                if (!response.ok) return; 
+
+                const tracks = await response.json();
+                if (tracks.length === 0) return; // Оставляем заглушки
+
+                const defaultCovers = ['cover1.jpg', 'cover2.jpg', 'cover3.jpg', 'cover4.jpg'];
+                const latestTracks = tracks.slice(0, 3); // Берем 3 последних
+
+                // Заменяем заглушки на реальные треки
+                container.innerHTML = latestTracks.map((track, index) => {
+                    const coverUrl = track.cover_url ? track.cover_url : `/images/${defaultCovers[index % defaultCovers.length]}`;
+                    
+                    return `
+                        <a href="/track.html?id=${track.id}" class="home-track-item">
+                            <div class="home-track-cover" style="background-image: url('${coverUrl}');"></div>
+                            <div class="home-track-info">
+                                <div class="home-track-title">${track.title}</div>
+                                <div class="home-track-meta">by ${track.artist_name} • ${track.bpm || '—'} BPM</div>
+                            </div>
+                        </a>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.log('Ошибка загрузки треков, показаны заглушки');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadHomeTracks);
+    </script>
+</body>
+</html>

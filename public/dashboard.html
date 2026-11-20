@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои биты — BEATLAB</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <style>
+        .dashboard-container { padding: 50px; max-width: 1000px; margin: 0 auto; min-height: 80vh; }
+        .dashboard-header { margin-bottom: 50px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .dashboard-title { font-size: 60px; font-weight: 900; text-transform: uppercase; letter-spacing: -2px; line-height: 1; color: var(--text-white); }
+        .beats-list { display: flex; flex-direction: column; gap: 20px; }
+        .beat-item { background: #1a1a1a; border: 1px solid var(--border-color); padding: 30px; border-radius: 20px; transition: border-color 0.3s; }
+        .beat-item:hover { border-color: var(--text-gray); }
+        .beat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .beat-info h3 { font-size: 24px; font-weight: 600; margin-bottom: 5px; color: var(--text-white); }
+        .beat-info p { font-size: 14px; color: var(--text-gray); }
+        .beat-meta { display: flex; gap: 20px; font-size: 12px; text-transform: uppercase; color: var(--text-gray); margin-top: 10px; }
+        
+        .beat-actions { display: flex; gap: 10px; }
+        .action-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-white);
+            border-radius: 50px;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .action-btn:hover { border-color: var(--text-white); }
+        .action-btn.delete { color: #ff3b3b; border-color: rgba(255, 59, 59, 0.3); }
+        .action-btn.delete:hover { background: #ff3b3b; color: white; border-color: #ff3b3b; }
+
+        .mini-timeline { display: flex; flex-direction: column; gap: 2px; margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px; }
+        .mini-row { height: 10px; display: flex; gap: 2px; background: #222; border-radius: 2px; overflow: hidden; }
+        .mini-cell { flex: 1; background: #333; border-radius: 2px; }
+        .mini-cell.active { background: var(--text-white); }
+        
+        .empty-state { color: var(--text-gray); text-align: center; margin-top: 50px; }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">BEATLAB®</div>
+        <nav class="nav-links">
+            <a href="/">Главная</a>
+            <a href="/library.html">Библиотека</a>
+            <a href="/studio.html">Студия</a>
+            <a href="/about.html">О проекте</a>
+            <a href="/contacts.html">Контакты</a>
+            <a href="/dashboard.html" style="color: var(--text-gray);">Кабинет</a>
+        </nav>
+        <div class="nav-auth">
+            <a href="/login.html" class="link-login">Войти</a>
+            <a href="/register.html" class="btn-dark">Регистрация</a>
+        </div>
+    </header>
+
+    <section class="dashboard-container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">MY<br>BEATS</h1>
+            <a href="/studio.html" class="btn-outline">+ Новый бит</a>
+        </div>
+        <div class="beats-list" id="beatsContainer"><p class="empty-state">Загрузка...</p></div>
+    </section>
+
+    <script src="/js/main.js"></script>
+    <script>
+        async function loadMyBeats() {
+            const container = document.getElementById('beatsContainer');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser) {
+                container.innerHTML = `<div class="empty-state"><p>Вы не вошли.</p><br><a href="/login.html" class="btn-outline">Войти</a></div>`;
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/beats/${currentUser.id}`);
+                const beats = await response.json();
+
+                if (beats.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><p>У вас пока нет битов.</p><br><a href="/studio.html" class="btn-outline">Создать первый</a></div>`;
+                    return;
+                }
+
+                container.innerHTML = beats.map(beat => {
+                    let pattern = null;
+                    try { pattern = JSON.parse(beat.pattern_json || beat.instruments_json); } catch(e) {}
+
+                    let miniTimelineHTML = '<div class="mini-timeline">';
+                    if (pattern) {
+                        const tracks = ['kick', 'snare', 'hihat', 'bass', 'melody'];
+                        tracks.forEach(track => {
+                            miniTimelineHTML += `<div class="mini-row">`;
+                            for (let i = 0; i < 16; i++) {
+                                const isActive = pattern[track]?.some(block => i >= block.start && i < block.start + block.length);
+                                miniTimelineHTML += `<div class="mini-cell ${isActive ? 'active' : ''}"></div>`;
+                            }
+                            miniTimelineHTML += `</div>`;
+                        });
+                    }
+                    miniTimelineHTML += '</div>';
+
+                    return `
+                        <div class="beat-item" id="beat-${beat.id}">
+                            <div class="beat-header">
+                                <div class="beat-info">
+                                    <h3>${beat.name}</h3>
+                                    <div class="beat-meta">
+                                        <span>Жанр: ${beat.genre}</span>
+                                        <span>BPM: ${beat.bpm}</span>
+                                        <span>${new Date(beat.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                                <div class="beat-actions">
+                                    <a href="/studio.html?edit=${beat.id}" class="action-btn">Редактировать</a>
+                                    <button class="action-btn delete" onclick="deleteBeat(${beat.id})">Удалить</button>
+                                </div>
+                            </div>
+                            ${miniTimelineHTML}
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                container.innerHTML = '<p style="color: red;">Ошибка загрузки.</p>';
+            }
+        }
+
+        // Функция удаления с подробным выводом ошибки
+        async function deleteBeat(id) {
+            if (!confirm('Вы уверены, что хотите удалить этот бит?')) return;
+            
+            try {
+                console.log(`Отправка DELETE запроса для бита ID: ${id}`);
+                const response = await fetch(`/api/beats/${id}`, { method: 'DELETE' });
+                
+                const text = await response.text();
+                console.log('Ответ сервера:', response.status, text);
+
+                if (response.ok) {
+                    document.getElementById(`beat-${id}`).remove();
+                    alert('Бит удален!');
+                } else {
+                    alert('Ошибка при удалении: ' + text);
+                }
+            } catch (error) {
+                console.error('Ошибка сети:', error);
+                alert('Ошибка сети: ' + error.message);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadMyBeats);
+    </script>
+    <script src="/js/footer.js"></script>
+</body>
+</html>

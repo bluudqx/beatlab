@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Загрузить трек — BEATLAB</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">BEATLAB®</div>
+        <nav class="nav-links">
+            <a href="/">Главная</a>
+            <a href="/library.html">Библиотека</a>
+            <a href="/studio.html">Студия</a>
+            <a href="/about.html">О проекте</a>
+            <a href="/contacts.html">Контакты</a>
+        </nav>
+    </header>
+
+    <section class="auth-form" style="max-width: 500px;">
+        <h2>UPLOAD<br>TRACK</h2>
+        <p class="subtitle">Добавьте свой бит в библиотеку</p>
+
+        <form id="uploadForm">
+            <label>Название трека</label>
+            <input type="text" id="title" required placeholder="Например: Midnight Beat">
+
+            <label>Жанр</label>
+            <input type="text" id="genre" placeholder="Trap, Lo-Fi, House...">
+
+            <label>BPM</label>
+            <input type="number" id="bpm" placeholder="140">
+
+            <label>Обложка (картинка)</label>
+            <input type="file" id="cover" accept="image/*" style="padding: 10px; border: none;">
+
+            <label>Аудиофайл (MP3)</label>
+            <input type="file" id="audio" accept="audio/*" required style="padding: 10px; border: none;">
+
+            <button type="submit" class="btn-primary">Загрузить</button>
+        </form>
+    </section>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('genre', document.getElementById('genre').value);
+            formData.append('bpm', document.getElementById('bpm').value);
+            
+            const audioFile = document.getElementById('audio').files[0];
+            const coverFile = document.getElementById('cover').files[0];
+            
+            if (!audioFile) {
+                alert('Выберите аудиофайл!');
+                return;
+            }
+            
+            // Обрати внимание: названия 'audio' и 'cover' должны совпадать с тем, что в server.js
+            formData.append('audio', audioFile);
+            if (coverFile) {
+                formData.append('cover', coverFile);
+            }
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const artistId = currentUser ? currentUser.id : 1;
+            formData.append('artist_id', artistId); 
+
+            try {
+                const response = await fetch('/api/tracks', {
+                    method: 'POST',
+                    body: formData
+                });
+                const text = await response.text();
+
+                if (response.ok) {
+                    alert('Трек успешно загружен!');
+                    window.location.href = '/library.html';
+                } else {
+                    alert('Ошибка сервера: ' + text);
+                }
+            } catch (error) {
+                alert('Ошибка сети: ' + error.message);
+            }
+        });
+    </script>
+    <script src="/js/footer.js"></script>
+</body>
+</html>

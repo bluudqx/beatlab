@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотека — BEATLAB</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <style>
+        /* Стили для списочного отображения треков */
+        .track-list-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: #111;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .track-list-item:hover {
+            border-color: var(--text-gray);
+        }
+        .list-cover {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+        .list-info {
+            flex: 1;
+        }
+        .list-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-white);
+            margin-bottom: 5px;
+        }
+        .list-meta {
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+        .list-audio {
+            width: 300px;
+            flex-shrink: 0;
+            filter: invert(1);
+        }
+        @media (max-width: 768px) {
+            .track-list-item { flex-wrap: wrap; }
+            .list-audio { width: 100%; margin-top: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">BEATLAB®</div>
+        <nav class="nav-links">
+            <a href="/">Главная</a>
+            <a href="/library.html" style="color: var(--text-gray);">Библиотека</a>
+            <a href="/studio.html">Студия</a>
+            <a href="/about.html">О проекте</a>
+            <a href="/contacts.html">Контакты</a>
+        </nav>
+        <div class="nav-auth">
+            <a href="/login.html" class="link-login">Войти</a>
+            <a href="/register.html" class="btn-dark">Регистрация</a>
+        </div>
+    </header>
+
+    <section class="projects" style="min-height: 80vh; padding: 50px;">
+        <div class="section-header">
+            <h2 class="section-title">ALL<br>TRACKS</h2>
+            <a href="/upload.html" class="btn-outline">+ ЗАГРУЗИТЬ ТРЕК</a>
+        </div>
+        
+        <!-- Контейнер для списка треков -->
+        <div id="tracksContainer">
+            <p style="color: var(--text-gray);">Загрузка треков...</p>
+        </div>
+    </section>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/footer.js"></script>
+    <script>
+        async function loadTracks() {
+            const container = document.getElementById('tracksContainer');
+            try {
+                const response = await fetch('/api/tracks');
+                const tracks = await response.json();
+
+                if (tracks.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-gray);">Пока нет треков. Загрузите первый!</p>';
+                    return;
+                }
+
+                const defaultCovers = ['cover1.jpg', 'cover2.jpg', 'cover3.jpg', 'cover4.jpg'];
+
+                // Генерируем список
+                container.innerHTML = tracks.map((track, index) => {
+                    const coverUrl = track.cover_url ? track.cover_url : `/images/${defaultCovers[index % defaultCovers.length]}`;
+                    
+                    return `
+                        <div class="track-list-item">
+                            <a href="/track.html?id=${track.id}" style="display: flex; align-items: center; gap: 20px; flex: 1; text-decoration: none; color: inherit;">
+                                <div class="list-cover" style="background-image: url('${coverUrl}');"></div>
+                                <div class="list-info">
+                                    <div class="list-title">${track.title}</div>
+                                    <div class="list-meta">${track.artist_name} • ${track.genre || '—'} • ${track.bpm || '—'} BPM</div>
+                                </div>
+                            </a>
+                            <audio controls class="list-audio">
+                                <source src="${track.file_url}" type="audio/mpeg">
+                            </audio>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<p style="color: red;">Ошибка загрузки треков.</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadTracks);
+    </script>
+</body>
+</html>

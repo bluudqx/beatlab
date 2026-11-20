@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О проекте — BEATLAB</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <style>
+        .about-container {
+            padding: 100px 50px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .about-title {
+            font-size: 80px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -3px;
+            line-height: 0.9;
+            margin-bottom: 50px;
+            color: var(--text-white);
+        }
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
+        .about-text p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-gray);
+            margin-bottom: 20px;
+        }
+        .tech-list {
+            list-style: none;
+        }
+        .tech-list li {
+            font-size: 14px;
+            color: var(--text-white);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+        }
+        .tech-list li span:last-child {
+            color: var(--text-gray);
+            font-size: 12px;
+        }
+        .highlight {
+            color: var(--text-white);
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .about-content { grid-template-columns: 1fr; }
+            .about-title { font-size: 50px; }
+            .about-container { padding: 50px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">BEATLAB®</div>
+        <nav class="nav-links">
+            <a href="/">Главная</a>
+            <a href="/library.html">Библиотека</a>
+            <a href="/studio.html">Студия</a>
+            <a href="/contacts.html">Контакты</a>
+            <a href="/about.html" style="color: var(--text-gray);">О проекте</a>
+        </nav>
+        <div class="nav-auth">
+            <a href="/login.html" class="link-login">Войти</a>
+            <a href="/register.html" class="btn-dark">Регистрация</a>
+        </div>
+    </header>
+
+    <section class="about-container">
+        <h1 class="about-title">ABOUT<br>PROJECT</h1>
+        
+        <div class="about-content">
+            <div class="about-text">
+                <p><span class="highlight">BEATLAB</span> — это веб-платформа для создания музыки, прослушивания треков и обмена опытом между битмейкерами.</p>
+                <p>Проект разработан в рамках курсовой работы. Основная цель — предоставить начинающим музыкантам бесплатный инструмент для создания битов прямо в браузере, без установки сложного программного обеспечения.</p>
+                <p>На сайте реализованы: система регистрации, загрузка треков, библиотека с плеером, а также интерактивная студия (секвенсор), где можно создавать собственные ритмы и сохранять их в личном кабинете.</p>
+                <p style="font-size: 12px; margin-top: 40px;">Разработчик: <span class="highlight">Аминат Шартан</span></p>
+            </div>
+            
+            <div>
+                <h3 style="font-size: 20px; text-transform: uppercase; margin-bottom: 20px; color: var(--text-white);">Стек технологий</h3>
+                <ul class="tech-list">
+                    <li><span>Frontend</span> <span>HTML5, CSS3, JavaScript</span></li>
+                    <li><span>Backend</span> <span>Node.js, Express</span></li>
+                    <li><span>База данных</span> <span>SQLite3</span></li>
+                    <li><span>Аудио-движок</span> <span>Web Audio API</span></li>
+                    <li><span>Шифрование</span> <span>bcryptjs</span></li>
+                    <li><span>Загрузка файлов</span> <span>Multer</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <script src="/js/footer.js"></script>
+</body>
+</html>

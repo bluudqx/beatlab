@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Трек — BEATLAB</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <style>
+        .track-page {
+            padding: 100px 50px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .track-hero {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 60px;
+            background: #111;
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .track-cover {
+            width: 300px;
+            height: 300px;
+            border-radius: 15px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+        .track-details {
+            flex: 1;
+        }
+        .track-title {
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            color: var(--text-white);
+        }
+        .track-artist {
+            font-size: 16px;
+            color: var(--text-gray);
+            margin-bottom: 20px;
+        }
+        .track-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-gray);
+            margin-bottom: 20px;
+        }
+        .track-meta span strong {
+            color: var(--text-white);
+            display: block;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        audio {
+            width: 100%;
+            margin-top: 10px;
+            filter: invert(1);
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 12px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+        .back-link:hover {
+            color: var(--text-white);
+        }
+        @media (max-width: 768px) {
+            .track-hero { flex-direction: column; text-align: center; }
+            .track-title { font-size: 32px; }
+            .track-page { padding: 50px 20px; }
+            .track-cover { width: 100%; height: auto; aspect-ratio: 1/1; }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">BEATLAB®</div>
+        <nav class="nav-links">
+            <a href="/">Главная</a>
+            <a href="/library.html">Библиотека</a>
+            <a href="/studio.html">Студия</a>
+            <a href="/about.html">О проекте</a>
+            <a href="/contacts.html">Контакты</a>
+        </nav>
+        <div class="nav-auth">
+            <a href="/login.html" class="link-login">Войти</a>
+            <a href="/register.html" class="btn-dark">Регистрация</a>
+        </div>
+    </header>
+
+    <section class="track-page" id="trackContent">
+        <p style="color: var(--text-gray);">Загрузка трека...</p>
+    </section>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/footer.js"></script>
+    <script>
+        async function loadTrack() {
+            const container = document.getElementById('trackContent');
+            const urlParams = new URLSearchParams(window.location.search);
+            const trackId = urlParams.get('id');
+
+            if (!trackId) {
+                container.innerHTML = '<p style="color: red;">Трек не найден (не указан ID).</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/tracks/${trackId}`);
+                if (!response.ok) throw new Error('Трек не найден');
+                const track = await response.json();
+
+                const coverUrl = track.cover_url ? track.cover_url : '/images/cover1.jpg';
+
+                container.innerHTML = `
+                    <a href="/library.html" class="back-link">← Назад в библиотеку</a>
+                    <div class="track-hero">
+                        <div class="track-cover" style="background-image: url('${coverUrl}');"></div>
+                        <div class="track-details">
+                            <h1 class="track-title">${track.title}</h1>
+                            <p class="track-artist">Автор: ${track.artist_name}</p>
+                            <div class="track-meta">
+                                <span>Жанр<strong>${track.genre || '—'}</strong></span>
+                                <span>BPM<strong>${track.bpm || '—'}</strong></span>
+                                <span>Прослушиваний<strong>${track.plays_count || 0}</strong></span>
+                            </div>
+                            <audio controls>
+                                <source src="${track.file_url}" type="audio/mpeg">
+                            </audio>
+                            <button id="shareBtn" style="margin-top: 20px; padding: 10px 20px; background: transparent; border: 1px solid var(--border-color); color: var(--text-white); border-radius: 50px; cursor: pointer; text-transform: uppercase; font-size: 10px; font-weight: 600;">Скопировать ссылку</button>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('shareBtn').addEventListener('click', () => {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Ссылка скопирована!');
+                });
+            } catch (error) {
+                container.innerHTML = '<p style="color: red;">Ошибка загрузки трека. Возможно, он был удален.</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadTrack);
+    </script>
+</body>
+</html>
