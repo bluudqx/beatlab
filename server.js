@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs'); // Для создания папки uploads
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 require('dotenv').config();
@@ -10,12 +11,24 @@ const db = require('./database');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ==========================================
+// СОЗДАНИЕ ПАПКИ UPLOADS (ЕСЛИ ЕЁ НЕТ)
+// ==========================================
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+    console.log('✅ Папка uploads создана');
+}
+
+// ==========================================
+// НАСТРОЙКИ
+// ==========================================
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 
-// --- НАСТРОЙКА ЗАГРУЗКИ ФАЙЛОВ ---
+// --- НАСТРОЙКА ЗАГРУЗКИ ФАЙЛОВ (АУДИО + ОБЛОЖКА) ---
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/');
@@ -79,7 +92,7 @@ app.post('/api/login', (req, res) => {
 // 2. ТРЕКИ
 // ==========================================
 
-// ВАЖНО: Маршрут для одного трека должен идти ПЕРЕД маршрутом для всех треков!
+// ПОЛУЧЕНИЕ ОДНОГО ТРЕКА (должен идти перед общим GET)
 app.get('/api/tracks/:id', (req, res) => {
     const trackId = req.params.id;
     const sql = `
@@ -89,10 +102,7 @@ app.get('/api/tracks/:id', (req, res) => {
         WHERE tracks.id = ?
     `;
     db.get(sql, [trackId], (err, row) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Ошибка БД' });
-        }
+        if (err) return res.status(500).json({ error: 'Ошибка БД' });
         if (!row) return res.status(404).json({ error: 'Трек не найден' });
         res.json(row);
     });
@@ -186,17 +196,26 @@ app.post('/api/beats', (req, res) => {
 
     const finalUserId = user_id || 1; 
 
-    db.run(
-        'INSERT INTO beat_projects (user_id, name, genre, bpm, instruments_json, pattern_json) VALUES (?, ?, ?, ?, ?, ?)',
-        [finalUserId, name, genre, bpm, JSON.stringify(instruments), JSON.stringify(pattern)],
-        function (err) {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ error: 'Ошибка при сохранении бита' });
-            }
-            res.status(201).json({ message: 'Бит сохранен!', beatId: this.lastID });
+    // Проверяем, существует ли пользователь (чтобы не было FOREIGN KEY ошибки)
+    db.get('SELECT id FROM users WHERE id = ?', [finalUserId], (err, user) => {
+        if (err) return res.status(500).json({ error: 'Ошибка базы данных' });
+        
+        if (!user) {
+            return res.status(400).json({ error: 'Пользователь не найден. Пожалуйста, перезайдите в аккаунт.' });
         }
-    );
+
+        db.run(
+            'INSERT INTO beat_projects (user_id, name, genre, bpm, instruments_json, pattern_json) VALUES (?, ?, ?, ?, ?, ?)',
+            [finalUserId, name, genre, bpm, JSON.stringify(instruments), JSON.stringify(pattern)],
+            function (err) {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).json({ error: 'Ошибка при сохранении бита' });
+                }
+                res.status(201).json({ message: 'Бит сохранен!', beatId: this.lastID });
+            }
+        );
+    });
 });
 
 app.get('/api/beats/:userId', (req, res) => {
